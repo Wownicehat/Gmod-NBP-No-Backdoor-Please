@@ -1,0 +1,11 @@
+{
+	"title"		:	"NBP No backdoor please | Protecte your server",
+	"type"		:	"ServerContent",
+	"tags"		:	[ "Fun", "Roleplay" ],
+	"ignore"	:
+	[
+		"*.psd",
+		"*.vcproj",
+		"*.svn*"
+	]
+}
