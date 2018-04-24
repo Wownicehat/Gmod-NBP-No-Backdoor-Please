@@ -3,23 +3,29 @@ local NBP = {}
 NBP.Strings = {
 		"UKT_MOMOS", "Sandbox_ArmDupe", "Fix_Keypads", "memeDoor",
 		"Remove_Exploiters", "noclipcloakaesp_chat_text", "fellosnake", "NoNerks",
-		"BackDoor", "kek", "OdiumBackDoor", "cucked", "ITEM", "ULogs_Info", "Ulib_Message",
+		"BackDoor", "kek", "OdiumBackDoor", "cucked", "ULogs_Info", "Ulib_Message",
 		"m9k_addons", "Sbox_itemstore", "rcivluz", "Sbox_darkrp", "_Defqon", "something",
 		"random", "strip0", "killserver", "DefqonBackdoor", "fuckserver", "cvaraccess",
-		"web", "rconadmin", "_CAC_ReadMemory", "nostrip", "c", "DarkRP_AdminWeapons",
+		"rconadmin", "_CAC_ReadMemory", "nostrip", "DarkRP_AdminWeapons",
 		"enablevac", "SessionBackdoor", "LickMeOut", "MoonMan", "Im_SOCool", "fix",
 		"idk", "ULXQUERY2", "ULX_QUERY2", "jesuslebg", "zilnix", "ÃžÃ ?D)â—˜",
-		"disablebackdoor", "kill", "oldNetReadData", "SENDTEST", "Sandbox_GayParty",
+		"disablebackdoor", "oldNetReadData", "SENDTEST", "Sandbox_GayParty",
 		"nocheat", "_clientcvars", "_main", "ZimbaBackDoor", "stream", "waoz", "DarkRP_UTF8",
 		"bdsm", "ZernaxBackdoor", "anticrash", "audisquad_lua", "dontforget", "noprop", "thereaper",
 		"0x13"
 }
 
+hook.Add("NBP_Message", "LogToFile", function(msg)
+	file.Append("NBP_logs.txt", string.format("[NBP] %f : "..msg.."\n", CurTime()))
+end)
+
 NBP.Broadcast = function(msg, ...)
 	msg = string.format(msg, ...)
+	hook.Run("NBP_Message", msg)
 	for i,v in ipairs(player.GetHumans()) do
 		v:ChatPrint(msg)
 	end
+	print(msg)
 end
 
 
@@ -47,7 +53,7 @@ end
 
 
 hook.Add("NBP_banning_hacker", "LogToFile", function(ply)
-	file.Append("NBP_skids.txt", "[NBP] "..CurTime().." : Banning "..ply:Nick().."("..ply:SteamID().."{"..ply:IPAddress().."}) for trying to backdoor the server")
+	file.Append("NBP_skids.txt", "[NBP] "..CurTime().." : Banning "..ply:Nick().."("..ply:SteamID().."{"..ply:IPAddress().."}) for trying to backdoor the server\n")
 end)
 
 NBP.Ban = function(l, ply)
@@ -65,15 +71,19 @@ NBP.CheckRunningString = function( str, name, thing )
 		NBP.Broadcast("Someone attempted to add a network string (probably backdoor)")
 		return false
 	end
+	if string.find(str, "net.Receive") then
+		NBP.Broadcast("Someone attempted to add a network receiver (probably backdoor)")
+		return false
+	end
 	for i,v in pairs(NBP.Strings) do
-		if (type(v) == type("")) and string.find(str, "\""..v.."\"") then
+		if (type(v) == type("")) and string.find(str, v) then
 			NBP.Broadcast("Someone attempted to run lua code including backdoor name (%s)", v)
 			return false
 		end
 	end
-
-	if NBP.IsNet() then -- Can't be good
-		NBP.Broadcast("/!\\ Attempted to run dynamique code from net")
+	local fromnet, sp = NBP.IsNet()
+	if fromnet then -- Can't be good
+		NBP.Broadcast("/!\\ Attempted to run dynamique code from net (SP: %x)", sp)
 		return false
 	end
 
@@ -123,11 +133,7 @@ function net.ReadString()
 	for i,v in ipairs(NBP.LuaStrings) do
 		if (type(v) == type("")) and string.match(read, v) then
 			NBP.Broadcast("/!\\ Attempted to transmite code tought net")
-			return [[
-				for i,v in ipairs(player.GetHumans()) do
-					v:ChatPrint("Hacking attemp blocked")
-				end
-			]]
+			return [[print("oh no :(")]]
 		end
 	end
 	NBP.LastReadString = read
@@ -138,13 +144,12 @@ NBP.Spoofed = NBP.Strings
 timer.Create("NBP_RemoveAndSpoof", 2, 0, function()
 	for i,v in pairs(NBP.Strings) do
 		if net.Receivers[v] then
-			net.Receivers[v] = ban
+			net.Receive(v, ban)
 		end
 		if (not NBP.Spoofed[v]) and (type(v) == type("")) then
 			util.AddNetworkString(v)
 			net.Receive(v, ban)     -- Spoof
 			NBP.Spoofed[v] = true
-			NBP.Broadcast("Spoofed backdoor (%s)", v)
 		end
 	end
 end)
