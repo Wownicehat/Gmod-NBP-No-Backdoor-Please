@@ -1,7 +1,5 @@
 print("Starting NBP")
 local NBP = {}
-
--- Backdoor batabase for spoofing and RunString detection
 NBP.Strings = {
 		"UKT_MOMOS", "Sandbox_ArmDupe", "Fix_Keypads", "memeDoor",
 		"Remove_Exploiters", "noclipcloakaesp_chat_text", "fellosnake", "NoNerks",
@@ -21,7 +19,6 @@ hook.Add("NBP_Message", "LogToFile", function(msg)
 	file.Append("NBP_logs.txt", string.format("[NBP] %f : "..msg.."\n", CurTime()))
 end)
 
--- Broacast message to all player
 NBP.Broadcast = function(msg, ...)
 	msg = string.format(msg, ...)
 	hook.Run("NBP_Message", msg)
@@ -32,7 +29,7 @@ NBP.Broadcast = function(msg, ...)
 end
 
 
--- For LUA script detection
+
 NBP.LuaStrings = {
 	"player.GetAll()", "player.GetHumans()", "RunString", "CompileString",
 	"hook.Add", "hook.Remove", "ulx groupallow user \"ulx luarun\"",
@@ -40,8 +37,6 @@ NBP.LuaStrings = {
 	"http.Fetch", "http.Post",
 	"net.Receive", "util.AddNetworkString"
 }
-
--- Detecte if "includes/extensions/net.lua" is in the call stack
 NBP.IsNet = function()
 	for i=1,10 do
 		local x = debug.getinfo(i)
@@ -54,14 +49,82 @@ NBP.IsNet = function()
 	return false
 end
 
+-- This function search for SetUserGroup in a function
+--  What a long name xD
+NBP.IsBadHookOrConcommand = function(func)
+	for i=0,10 do
+		local xx = jit.util.funck( func, -i )
+		if xx == "SetUserGroup" then
+			return true, -i
+		end
+	end
+	return false
+end
 
+-- This function searcg for SteamID
+NBP.SearchForSteamID = function(func)
+	local steamids = {}
+	for i=0,10 do
+		local xx = jit.util.funck( func, -i )
+		if xx and string.find(xx, "STEAM_[0-9]+:[0-9]+:[0-9]+") then
+			table.insert(steamids, xx)
+		end
+	end
+	return steamids
+end
+
+NBP.CheckForFuncBackdoor = function(func_)
+	local badfunc, sp = NBP.IsBadHookOrConcommand(func_)
+	if badfunc then
+		NBP.Broadcast("/!\\ Detected SetUserGroup in a hook/concommand !")
+		-- Search and ban steamids
+		for k,v in pairs(NBP.SearchForSteamID(func_)) do
+			NBP.Broadcast("/!\\ Detected SteamID in a backdoor (%s) you should probably ban him for hacking !", v)
+		end
+		return false
+	end
+	return true
+end
+
+
+
+
+NBP.HookAdd = hook.Add
+function hook.Add( type_, name_, func_ )
+	if NBP.CheckForFuncBackdoor(func_) then
+		NBP.HookAdd(type_, name_, func_)
+	end
+end
+
+NBP.ConcommandAdd = concommand.Add
+function concommand.Add( name, func_, ... )
+	if NBP.CheckForFuncBackdoor(func_) then
+		NBP.ConcommandAdd(name, func_, ...)
+	end
+end
+
+timer.Create("NBP_RemoveBadHookAndConcommands", 5, 0, function()
+	for i,v in pairs(concommand.GetTable()) do
+		if not NBP.CheckForFuncBackdoor(v) then
+			NBP.Broadcast("/!\\ Detected concommand backdoor !")
+			concommand.Remove(i)
+		end
+	end
+	for t,v in pairs(hook.GetTable()) do
+		for n,f in pairs(v) do
+		 	if not NBP.CheckForFuncBackdoor(f) then
+				NBP.Broadcast("/!\\ Detected hook backdoor !")
+				hook.Remove(t,n)
+			end
+		 end 
+	end
+end)
 
 
 hook.Add("NBP_banning_hacker", "LogToFile", function(ply)
 	file.Append("NBP_skids.txt", "[NBP] "..CurTime().." : Banning "..ply:Nick().."("..ply:SteamID().."{"..ply:IPAddress().."}) for trying to backdoor the server\n")
 end)
 
--- For backdoor spoofing
 NBP.Ban = function(l, ply)
 	NBP.Broadcast("%s attempted to hack the server, banning him. . .", ply:Nick().."("..ply:SteamID().."{"..ply:IPAddress().."})")
 	hook.Run("NBP_banning_hacker", ply)
@@ -69,14 +132,8 @@ NBP.Ban = function(l, ply)
 	ply:Kick("Attempted to hack the server")
 end 
 
--- To be overwrote in net.ReadString
 NBP.LastReadString = ""
 
-
---[[
-Function: NBP.CheckRunningString
-Parameter: str (lua code), name (compilation name), thing (HandleError)
-]]
 NBP.CheckRunningString = function( str, name, thing )
 	-- F*ck ulx luarun [BACKDOOR]
 	if string.find(str, "util.AddNetworkString") then
@@ -127,7 +184,6 @@ end
 
 RunStringEx = RunString -- They are the same
 
------------------ GBackdoor interception
 NBP.httpFetch = http.Fetch
 function http.Fetch( url, os, orr )
 	if string.find(url, "/core/stage1.php") then return end
@@ -139,7 +195,6 @@ function http.Post( url, param, os, orr )
 	if string.find(url, "/core/stage2.php") then return end
 	NBP.httpPost(url, param, os, orr)
 end
------------------
 
 NBP.ReadString = net.ReadString
 function net.ReadString()
@@ -155,7 +210,6 @@ function net.ReadString()
 end
 
 NBP.Spoofed = NBP.Strings
--- Self explanatorie
 timer.Create("NBP_RemoveAndSpoof", 2, 0, function()
 	for i,v in pairs(NBP.Strings) do
 		if net.Receivers[v] then
