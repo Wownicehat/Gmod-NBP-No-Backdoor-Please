@@ -1,5 +1,4 @@
 
-Verifio(STEAM_0:1:107916312){89.3.129.77:27005} HTTP FETCH : https://raw.github.com/FPtje/DarkRPMotd/master/motd.txt
 Razaraz(STEAM_0:1:190190054){90.113.231.144:27005} HTTP FETCH : https://raw.github.com/FPtje/DarkRPMotd/master/motd.txt
 maxou0609(STEAM_0:1:418946341){213.213.242.127:27005} HTTP FETCH : https://raw.github.com/FPtje/DarkRPMotd/master/motd.txt
 Yoshi Katsu(STEAM_0:1:238581553){176.142.120.136:27005} HTTP FETCH : https://raw.githubusercontent.com/TeamUlysses/ulib/master/ulib.build
@@ -1146,10 +1145,8 @@ benlaterreur(STEAM_0:1:197513353){90.110.133.19:27005} HTTP(Fetch) : https://raw
 benlaterreur(STEAM_0:1:197513353){90.110.133.19:27005} HTTP(Fetch) : https://raw.githubusercontent.com/TeamUlysses/ulx/master/ulx.build
 benlaterreur(STEAM_0:1:197513353){90.110.133.19:27005} HTTP(Fetch) : http://diabloscoder.com/lang/tprsa/english.txt
 benlaterreur(STEAM_0:1:197513353){90.110.133.19:27005} HTTP(Fetch) : https://raw.github.com/FPtje/DarkRPMotd/master/motd.txt
-Verifio(STEAM_0:1:107916312){89.159.187.189:27005} HTTP(Fetch) : https://raw.githubusercontent.com/TeamUlysses/ulib/master/ulib.build
-Verifio(STEAM_0:1:107916312){89.159.187.189:27005} HTTP(Fetch) : https://raw.githubusercontent.com/TeamUlysses/ulx/master/ulx.build
-Verifio(STEAM_0:1:107916312){89.159.187.189:27005} HTTP(Fetch) : http://diabloscoder.com/lang/tprsa/english.txt
-Verifio(STEAM_0:1:107916312){89.159.187.189:27005} HTTP(Fetch) : https://raw.github.com/FPtje/DarkRPMotd/master/motd.txt
+
+(STEAM_0:1:107916312){89.159.187.189:27005} HTTP(Fetch) : https://raw.githubusercontent.com/TeamUlysses/ulib/master/ulib.build
 Ani_Elo63(STEAM_0:0:115611801){90.126.81.191:27005} HTTP(Fetch) : https://raw.githubusercontent.com/TeamUlysses/ulib/master/ulib.build
 Ani_Elo63(STEAM_0:0:115611801){90.126.81.191:27005} HTTP(Fetch) : https://raw.githubusercontent.com/TeamUlysses/ulx/master/ulx.build
 Ani_Elo63(STEAM_0:0:115611801){90.126.81.191:27005} HTTP(Fetch) : http://diabloscoder.com/lang/tprsa/english.txt
@@ -1651,13 +1648,6 @@ Alexandre Park(STEAM_0:0:167149730){109.30.55.48:27005} HTTP(Fetch) : https://ra
 Alexandre Park(STEAM_0:0:167149730){109.30.55.48:27005} HTTP(Fetch) : https://raw.githubusercontent.com/TeamUlysses/ulx/master/ulx.build
 Alexandre Park(STEAM_0:0:167149730){109.30.55.48:27005} HTTP(Fetch) : http://diabloscoder.com/lang/tprsa/english.txt
 Alexandre Park(STEAM_0:0:167149730){109.30.55.48:27005} HTTP(Fetch) : https://raw.github.com/FPtje/DarkRPMotd/master/motd.txt
-Verifio Zelas(STEAM_0:1:107916312){89.159.187.189:27005} HTTP(Fetch) : https://raw.githubusercontent.com/TeamUlysses/ulib/master/ulib.build
-Verifio Zelas(STEAM_0:1:107916312){89.159.187.189:27005} HTTP(Fetch) : https://raw.githubusercontent.com/TeamUlysses/ulx/master/ulx.build
-Verifio Zelas(STEAM_0:1:107916312){89.159.187.189:27005} HTTP(Fetch) : http://diabloscoder.com/lang/tprsa/english.txt
-Verifio Zelas(STEAM_0:1:107916312){89.159.187.189:27005} HTTP(Fetch) : https://raw.github.com/FPtje/DarkRPMotd/master/motd.txt
-mathiscanta-32(STEAM_0:0:138496710){86.206.108.136:27005} HTTP(Fetch) : https://ghostbin.com/paste/a6ueh/raw
-BobAtomic(STEAM_0:1:164803314){88.164.221.139:27006} HTTP(Fetch) : https://ghostbin.com/paste/a6ueh/raw
-Verifio Zelas(STEAM_0:1:107916312){89.159.187.189:27005} HTTP(Fetch) : https://ghostbin.com/paste/a6ueh/raw
 BobAtomic(STEAM_0:1:164803314){88.164.221.139:27006} HTTP(Fetch) : https://dl.dropboxusercontent.com/u/13116851/VCMod_Versions.txt
 BobAtomic(STEAM_0:1:164803314){88.164.221.139:27006} HTTP(Fetch) : https://dl.dropboxusercontent.com/u/13116851/VCMod_Addons.txt
 Lucie | CSGOHandouts.com(STEAM_0:0:105183369){86.238.3.73:27005} HTTP(Fetch) : https://raw.githubusercontent.com/TeamUlysses/ulib/master/ulib.build
@@ -1969,10 +1959,6 @@ Yukii(STEAM_0:1:156182498){90.126.184.219:27005} HTTP(Fetch) : https://raw.githu
 Yukii(STEAM_0:1:156182498){90.126.184.219:27005} HTTP(Fetch) : https://raw.githubusercontent.com/TeamUlysses/ulx/master/ulx.build
 Yukii(STEAM_0:1:156182498){90.126.184.219:27005} HTTP(Fetch) : http://diabloscoder.com/lang/tprsa/english.txt
 Yukii(STEAM_0:1:156182498){90.126.184.219:27005} HTTP(Fetch) : https://raw.github.com/FPtje/DarkRPMotd/master/motd.txt
-Verifio Zelas(STEAM_0:1:107916312){89.159.187.189:27005} HTTP(Fetch) : https://raw.githubusercontent.com/TeamUlysses/ulib/master/ulib.build
-Verifio Zelas(STEAM_0:1:107916312){89.159.187.189:27005} HTTP(Fetch) : https://raw.githubusercontent.com/TeamUlysses/ulx/master/ulx.build
-Verifio Zelas(STEAM_0:1:107916312){89.159.187.189:27005} HTTP(Fetch) : http://diabloscoder.com/lang/tprsa/english.txt
-Verifio Zelas(STEAM_0:1:107916312){89.159.187.189:27005} HTTP(Fetch) : https://raw.github.com/FPtje/DarkRPMotd/master/motd.txt
 Jean Merde(STEAM_0:0:420799778){82.212.177.157:27005} HTTP(Fetch) : https://ghostbin.com/paste/a6ueh/raw
 Hitler(STEAM_0:1:107916312){89.159.187.189:27005} HTTP(Fetch) : https://ghostbin.com/paste/a6ueh/raw
 superfou598(STEAM_0:0:212305020){86.71.101.41:27005} HTTP(Fetch) : https://ghostbin.com/paste/a6ueh/raw
