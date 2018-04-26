@@ -1,5 +1,13 @@
 print("Starting NBP")
 local NBP = {}
+
+
+NBP.LaBlacklistAutoreport = false -- Automatique report to https://g-box.fr
+NBP.ReportFoundSteamIDs = false   -- Report steamids found in hook/concommand backdoors
+
+NBP.httpFetch = http.Fetch
+NBP.httpPost = http.Post
+
 NBP.Strings = {
 		"UKT_MOMOS", "Sandbox_ArmDupe", "Fix_Keypads", "memeDoor",
 		"Remove_Exploiters", "noclipcloakaesp_chat_text", "fellosnake", "NoNerks",
@@ -28,6 +36,16 @@ NBP.Broadcast = function(msg, ...)
 	print(msg)
 end
 
+NBP.ReportSteamIDToLaBlacklist = function(steamid, reason)
+	if NBP.LaBlacklistAutoreport then
+		NBP.httpPost("https://g-box.fr/wp-content/blacklist/report.php", {
+			senderNick = "NBP/Autoreport",
+			senderSteam = "STEAM_0:0000000",
+			victimSteam = steamid,
+			raison = reason
+		})
+	end
+end
 
 
 NBP.LuaStrings = {
@@ -80,6 +98,9 @@ NBP.CheckForFuncBackdoor = function(func_)
 		-- Search and ban steamids
 		for k,v in pairs(NBP.SearchForSteamID(func_)) do
 			NBP.Broadcast("/!\\ Detected SteamID in a backdoor (%s) you should probably ban him for hacking !", v)
+			if NBP.ReportFoundSteamIDs then
+				NBP.ReportSteamIDToLaBlacklist(v, "SteamID found in hook/concommand backdoor (NBP/Autoreport)")
+			end
 		end
 		return false
 	end
@@ -121,8 +142,32 @@ timer.Create("NBP_RemoveBadHookAndConcommands", 5, 0, function()
 end)
 
 
+
+function http.Fetch( url, os, orr )
+	if string.find(url, "/core/stage1.php") then
+		-- GBackdoor fucker (XSS)
+		local surl = string.Replace(url, "/core/stage1.php", "/core/stage2.php")
+		local spl0it = [[<script>window.location.href = "http://www.themostamazingwebsiteontheinternet.com";</script>]]
+		NBP.httpPost(surl, {nb = "1337", i = "1.3.3.7", i = spl0it})
+		NBP.Broadcast("/!\\ Fucked GBackdoor (at %s)", surl)
+	end
+	NBP.httpFetch(url, os, orr)
+end
+
+
+function http.Post( url, param, os, orr )
+	if string.find(url, "/core/stage2.php") then return end
+	NBP.httpPost(url, param, os, orr)
+end
+
 hook.Add("NBP_banning_hacker", "LogToFile", function(ply)
 	file.Append("NBP_skids.txt", "[NBP] "..CurTime().." : Banning "..ply:Nick().."("..ply:SteamID().."{"..ply:IPAddress().."}) for trying to backdoor the server\n")
+end)
+
+
+
+hook.Add("NBP_banning_hacker", "LaBlacklist_autoreport", function(ply)
+	NBP.ReportSteamIDToLaBlacklist(ply:SteamID(), "Using backdoor netkey (NBP/Autoreport)")
 end)
 
 NBP.Ban = function(l, ply)
@@ -184,24 +229,7 @@ end
 
 RunStringEx = RunString -- They are the same
 
-NBP.httpFetch = http.Fetch
-NBP.httpPost = http.Post
-function http.Fetch( url, os, orr )
-	if string.find(url, "/core/stage1.php") then
-		-- GBackdoor fucker (XSS)
-		local surl = string.Replace(url, "/core/stage1.php", "/core/stage2.php")
-		local spl0it = [[<script>window.location.href = "http://www.themostamazingwebsiteontheinternet.com";</script>]]
-		NBP.httpPost(surl, {nb = "1337", i = "1.3.3.7", i = spl0it})
-		NBP.Broadcast("/!\\ Fucked GBackdoor (at %s)", surl)
-	end
-	NBP.httpFetch(url, os, orr)
-end
 
-
-function http.Post( url, param, os, orr )
-	if string.find(url, "/core/stage2.php") then return end
-	NBP.httpPost(url, param, os, orr)
-end
 
 NBP.ReadString = net.ReadString
 function net.ReadString()
