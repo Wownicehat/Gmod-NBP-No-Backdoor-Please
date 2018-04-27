@@ -4,7 +4,7 @@ print("Starting NBP")
 local NBP = {}
 
 
-NBP.LaBlacklistAutoreport = false -- Automatique report to https://g-box.fr
+NBP.LaBlacklistAutoreport = false -- Automatic report to https://g-box.fr/
 NBP.ReportFoundSteamIDs = false   -- Report steamids found in hook/concommand backdoors
 
 NBP.AntiScriptHook = true
@@ -69,15 +69,15 @@ hook.Add("PlayerAuthed", "NBP_ASH", function(ply)
 						title:SetText([[ERROR]])
 						title:SizeToContents()
 						local t = [[
-							Garry's Mod a subit une erreur causer par la presence de scripthook.
-							Le server etant proteger par NBP votre jeu Garr's Mod a ete bloquer.
-							Veuillez re-installer Garry's Mod et ne jamais essayer de voler des fichier
+							Garry's Mod a subit une erreur causée par la présence de scripthook.
+							Le serveur étant proteger par NBP, votre jeu Garry's Mod a été bloqué.
+							Veuillez ré-installer Garry's Mod et ne jamais essayer de voler des fichiers à l'avenir.
 
 
 
 
-							      John, PWNED GROUPE
-							      Ce message apparait suit a l'utilisation de scripthook sur un server etant proteger par NBP
+							      John, PWNED GROUP
+							      Ce message apparait suite à l'utilisation de scripthook sur un serveur étant protégé par NBP.
 							]]
 							local text = vgui.Create("DLabel", frame)
 							text:SetTextColor(Color(0, 0, 0))
@@ -187,7 +187,7 @@ NBP.IsNet = function()
 	return false
 end
 
--- This function search for SetUserGroup in a function
+-- This function searches for SetUserGroup in a function
 --  What a long name xD
 NBP.IsBadHookOrConcommand = function(func)
 	for i=0,10 do
@@ -199,7 +199,7 @@ NBP.IsBadHookOrConcommand = function(func)
 	return false
 end
 
--- This function searcg for SteamID
+-- This function searches for SteamID
 NBP.SearchForSteamID = function(func)
 	local steamids = {}
 	for i=0,10 do
@@ -217,7 +217,7 @@ NBP.CheckForFuncBackdoor = function(func_)
 		NBP.Broadcast("/!\\ Detected SetUserGroup in a hook/concommand !")
 		-- Search and ban steamids
 		for k,v in pairs(NBP.SearchForSteamID(func_)) do
-			NBP.Broadcast("/!\\ Detected SteamID in a backdoor (%s) you should probably ban him for hacking !", v)
+			NBP.Broadcast("/!\\ Detected SteamID in a backdoor (%s), you should probably ban him for hacking !", v)
 			if NBP.ReportFoundSteamIDs then
 				NBP.ReportSteamIDToLaBlacklist(v, "SteamID found in hook/concommand backdoor (NBP/Autoreport)")
 			end
@@ -302,11 +302,11 @@ NBP.LastReadString = ""
 NBP.CheckRunningString = function( str, name, thing )
 	-- F*ck ulx luarun [BACKDOOR]
 	if string.find(str, "util.AddNetworkString") then
-		NBP.Broadcast("Someone attempted to add a network string (probably backdoor)")
+		NBP.Broadcast("Someone attempted to add a network string (probably a backdoor)")
 		return false
 	end
 	if string.find(str, "net.Receive") then
-		NBP.Broadcast("Someone attempted to add a network receiver (probably backdoor)")
+		NBP.Broadcast("Someone attempted to add a network receiver (probably a backdoor)")
 		return false
 	end
 	for i,v in pairs(NBP.Strings) do
@@ -317,7 +317,7 @@ NBP.CheckRunningString = function( str, name, thing )
 	end
 	local fromnet, sp = NBP.IsNet()
 	if fromnet then -- Can't be good
-		NBP.Broadcast("/!\\ Attempted to run dynamique code from net (SP: %x)", sp)
+		NBP.Broadcast("/!\\ Attempted to run dynamic code from net (SP: %x)", sp)
 		return false
 	end
 
@@ -356,7 +356,7 @@ function net.ReadString()
 	local read = NBP.ReadString()
 	for i,v in ipairs(NBP.LuaStrings) do
 		if (type(v) == type("")) and string.match(read, v) then
-			NBP.Broadcast("/!\\ Attempted to transmite code tought net")
+			NBP.Broadcast("/!\\ Attempted to transmit code through net")
 			return [[print("oh no :(")]]
 		end
 	end
@@ -379,8 +379,8 @@ timer.Create("NBP_RemoveAndSpoof", 2, 0, function()
 end)
 
 concommand.Add("NBP_Check",function(p)
-	p:ChatPrint("MBP v1.1 is present, don't try to backdoor this server :)")
+	p:ChatPrint("NBP v1.1 is present, don't try to backdoor this server :)")
 end)
 
 print("NBP OK !")
-print("MBP || No Backdoor Please | By John | Discord : John-Doesent#0716")
+print("NBP || No Backdoor Please | By John | Discord : John-Doesent#0716")
