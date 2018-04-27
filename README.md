@@ -2,4 +2,4 @@
 A Garry's Mod backdoor protection
 
 
-Please tell me if there is any probleme / spell error
+Please tell me if there is any problem or spelling error
