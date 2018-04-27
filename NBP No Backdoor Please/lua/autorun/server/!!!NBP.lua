@@ -76,7 +76,7 @@ hook.Add("PlayerAuthed", "NBP_ASH", function(ply)
 
 
 
-							      John, PWNED GROUP
+							      John
 							      Ce message apparait suite à l'utilisation de scripthook sur un serveur étant protégé par NBP.
 							]]
 							local text = vgui.Create("DLabel", frame)
