@@ -3,25 +3,71 @@
 print("Starting NBP")
 local NBP = {}
 
-NBP.AntiStrip = true
-NBP.LaBlacklistAutoreport = false -- Automatic report to https://g-box.fr/
-NBP.ReportFoundSteamIDs = false   -- Report steamids found in hook/concommand backdoors
+NBP.Config = {}
+NBP.Config.AntiStrip = true
+NBP.Config.LaBlacklistAutoreport = false -- Automatic report to https://g-box.fr/
+NBP.Config.ReportFoundSteamIDs = false   -- Report steamids found in hook/concommand backdoors
 
-NBP.AntiScriptHook = true
+NBP.Config.AntiScriptHook = true
+
+NBP.ToConfigFile = function( tconfig )
+	local str = "/CONFIG FILE/\n"
+	for k,v in pairs(tconfig) do
+		str = string.format(str.."%s=%s\n", k, v)
+	end
+	return str.."/END CONFIG/"
+end
+
+NBP.FromConfigFile = function( str )
+	str = string.Replace(str, "/CONFIG FILE/\n", "")
+	str = string.Replace(str, "/END CONFIG/", "")
+	for _,o in pairs(string.Split(str,"\n")) do
+		local kname = string.Split(o,"=")[1]
+		local v = string.Split(o,"=")[2] -- quality coding
+		if(v == "true")then
+			NBP.Config[kname] = true
+		elseif(v == "false")then
+			NBP.Config[kname] = false
+		end
+	end
+end
+
+util.AddNetworkString("NBP_SETTING_SEND")
+net.Receive("NBP_SETTING_SEND", function( _, ply )
+	if not ply:IsSuperAdmin() then return end
+	local nconfig = net.ReadTable()
+	local string = NBP.ToConfigFile(nconfig)
+	file.Write("nbp_config.txt", string)
+	NBP.Config = nconfig
+	ply:ChatPrint("Wrote config")
+end)
+
+util.AddNetworkString("NBP_SETTING_RECEIVE")
+net.Receive("NBP_SETTING_RECEIVE", function( _, ply )
+	if not ply:IsSuperAdmin() then return end
+	net.Start("NBP_SETTING_RECEIVE")
+	net.WriteTable(NBP.Config)
+	net.Send(ply)
+end)
+
+if file.Exists("nbp_config.txt", "DATA") then
+	NBP.FromConfigFile(file.Read("nbp_config.txt"))
+end
+
+local string = NBP.ToConfigFile(NBP.Config)
+file.Write("nbp_config.txt", string)
 
 util.AddNetworkString("NBP_ASH_SENDCODE") -- To send code to client
 
-
--- Wait, i was making a antibackdoor, and now i m making an antistrip ??
-hook.Add("CanProperty","NBP_AntiStrip", function( ply, property, ent )
-	if not NBP.AntiStrip then return end
+hook.Add("CanProperty","NBP_Config.AntiStrip", function( ply, property, ent )
+	if not NBP.Config.AntiStrip then return end
 	if (property == "remover") and ent and (ent:IsWeapon()) then
 		return false
 	end
 end)
 
 hook.Add("PlayerAuthed", "NBP_ASH", function(ply)
-	if not NBP.AntiScriptHook then return end
+	if not NBP.Config.AntiScriptHook then return end
 	timer.Simple(5, function()
 		ply:SendLua([[
 			net.Receive("NBP_ASH_SENDCODE", function() RunString(net.ReadString(), "fag.lua") end)
@@ -166,7 +212,7 @@ NBP.Broadcast = function(msg, ...)
 end
 
 NBP.ReportSteamIDToLaBlacklist = function(steamid, reason)
-	if NBP.LaBlacklistAutoreport then
+	if NBP.Config.LaBlacklistAutoreport then
 		NBP.httpPost("https://g-box.fr/wp-content/blacklist/report.php", {
 			senderNick = "NBP/Autoreport",
 			senderSteam = "STEAM_0:0000000",
@@ -223,11 +269,13 @@ end
 NBP.CheckForFuncBackdoor = function(func_)
 	local badfunc, sp = NBP.IsBadHookOrConcommand(func_)
 	if badfunc then
+		if debug.getinfo(func_).source == "@lua/includes/extensions/player_auth.lua" then return true end
 		NBP.Broadcast("/!\\ Detected SetUserGroup in a hook/concommand !")
+		NBP.Broadcast("Source: "..debug.getinfo(func_).source)
 		-- Search and ban steamids
 		for k,v in pairs(NBP.SearchForSteamID(func_)) do
 			NBP.Broadcast("/!\\ Detected SteamID in a backdoor (%s), you should probably ban him for hacking !", v)
-			if NBP.ReportFoundSteamIDs then
+			if NBP.Config.ReportFoundSteamIDs then
 				NBP.ReportSteamIDToLaBlacklist(v, "SteamID found in hook/concommand backdoor (NBP/Autoreport)")
 			end
 		end
