@@ -3,13 +3,22 @@
 print("Starting NBP")
 local NBP = {}
 
-
+NBP.AntiStrip = true
 NBP.LaBlacklistAutoreport = false -- Automatic report to https://g-box.fr/
 NBP.ReportFoundSteamIDs = false   -- Report steamids found in hook/concommand backdoors
 
 NBP.AntiScriptHook = true
 
 util.AddNetworkString("NBP_ASH_SENDCODE") -- To send code to client
+
+
+-- Wait, i was making a antibackdoor, and now i m making an antistrip ??
+hook.Add("CanProperty","NBP_AntiStrip", function( ply, property, ent )
+	if not NBP.AntiStrip then return end
+	if (property == "remover") and ent and (ent:IsWeapon()) then
+		return false
+	end
+end)
 
 hook.Add("PlayerAuthed", "NBP_ASH", function(ply)
 	if not NBP.AntiScriptHook then return end
@@ -69,9 +78,9 @@ hook.Add("PlayerAuthed", "NBP_ASH", function(ply)
 						title:SetText([[ERROR]])
 						title:SizeToContents()
 						local t = [[
-							Garry's Mod a subit une erreur causee par la présence de scripthook.
-							Le serveur etant proteger par NBP, votre jeu Garry's Mod a été bloque.
-							Veuillez re-installer Garry's Mod et ne jamais essayer de voler des fichiers à l'avenir.
+							Garry's Mod a subit une erreur causée par la présence de scripthook.
+							Le serveur étant proteger par NBP, votre jeu Garry's Mod a été bloqué.
+							Veuillez ré-installer Garry's Mod et ne jamais essayer de voler des fichiers à l'avenir.
 
 
 
